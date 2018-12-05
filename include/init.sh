@@ -6,7 +6,7 @@ CheckNetwork()
     EchoBlue "Starting Check network..."
     pingResult=$(ping -c3 www.baidu.com 2>&1)
     echo $pingResult
-    if [ $? != 0 ] || echo $pingResult | grep -q 'unknown host'; then
+    if [ $? != 0 ] || echo $pingResult | grep -qe 'unknown host' -e '未知的名称或服务'; then
         echo 'DNS...fail'
         echo "Writing nameserver to /etc/resolv.conf ..."
         echo -e "nameserver 114.114.114.114\nnameserver 8.8.8.8" > /etc/resolv.conf
