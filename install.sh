@@ -8,10 +8,10 @@
 . include/main.sh 
 . include/init.sh
 
-if [ "$#" -ne 0 ]; then
-    EchoRed "Usage: $0"
-    exit 1
-fi
+#if [ "$#" -ne 0 ]; then
+#    EchoRed "Usage: $0"
+#    exit 1
+#fi
 
 # Check if user is root
 if [ "0" != $(id -u) ]; then
@@ -36,13 +36,8 @@ echo "+------------------------------------------------------------------------+
 echo "|                                                                        |" 
 echo "+------------------------------------------------------------------------+"
 
-InitInstall()
+ModifyYumSource()
 {
-    #PressInstall
-    GetDistName
-    PrintSysInfo
-    CheckNetwork
-#    set -x
     if [[ "$distRO" == "RHEL" || "$distRO" == "CentOS" ]]; then
         RHELModifySource
     elif [ "$distRO" == "Debian" ]; then
@@ -50,6 +45,16 @@ InitInstall()
     elif [ "$distRO" == "Ubuntu" ]; then
         UbuntuModifySource 
     fi
+}
+
+InitInstall()
+{
+    #PressInstall
+    GetDistName
+    PrintSysInfo
+    CheckNetwork
+#    set -x
+    ModifyYumSource
 #    set +x
     SetTimeZone
     if [ "$distPM" == "yum" ]; then
@@ -63,4 +68,19 @@ InitInstall()
 #    UpdateLinux 
 }
 
-InitInstall 2>&1 | tee /root/linux-env-init.log
+
+action=$1 
+case "$action" in 
+    all)
+        InitInstall 2>&1 | tee /root/linux-env-init.log
+        ;;
+    mys)
+        ModifyYumSource 2>&1 | tee /root/linux-env-init.log
+        ;;
+    opt)
+        LinuxOpt 2>&1 | tee /root/linux-env-init.log
+        ;;
+    *)
+        EchoRed "Usage: $0 {all|mys|opt}"
+        ;; 
+esac 
