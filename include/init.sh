@@ -26,6 +26,7 @@ DisableSelinux()
 {
     EchoBlue "Disabling Selinux..."
     [ -s "/etc/selinux/config" ] && sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+    setenforce 0
 }
 
 DisableIptables()
